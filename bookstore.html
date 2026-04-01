@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litterae - Curated Books</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        :root {
+            --cream: #faf8f3;
+            --dark-brown: #3a3028;
+            --sage: #7a8f6b;
+            --gold: #c9b896;
+            --warm-beige: #e8dcc8;
+            --text-light: #5a5047;
+            --text-dark: #2a2520;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--dark-brown);
+            color: var(--cream);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold), var(--warm-beige));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-icon, .cart-icon {
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .search-icon:hover, .cart-icon:hover {
+            transform: scale(1.1);
+            color: var(--gold);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--sage);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--warm-beige) 0%, var(--cream) 100%);
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(202, 184, 150, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--dark-brown);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* Search Bar */
+        .search-container {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            background-color: var(--cream);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(201, 184, 150, 0.2);
+            border-color: var(--sage);
+        }
+
+        .search-bar::placeholder {
+            color: var(--text-light);
+        }
+
+        /* Categories */
+        .categories {
+            padding: 3rem 2rem;
+            background-color: var(--cream);
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--dark-brown);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--warm-beige), var(--cream));
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--sage), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--sage);
+        }
+
+        .category-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .category-card h3 {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Featured Books */
+        .featured-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, var(--cream) 0%, var(--warm-beige) 100%);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .book-card {
+            position: relative;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .book-card:nth-child(1) { animation-delay: 0.1s; }
+        .book-card:nth-child(2) { animation-delay: 0.2s; }
+        .book-card:nth-child(3) { animation-delay: 0.3s; }
+        .book-card:nth-child(4) { animation-delay: 0.4s; }
+        .book-card:nth-child(5) { animation-delay: 0.5s; }
+        .book-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .book-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, var(--gold), var(--warm-beige));
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 2rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--dark-brown);
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .book-card:hover .book-image {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .book-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.3), transparent);
+            pointer-events: none;
+        }
+
+        .book-info {
+            padding: 1.5rem 0;
+        }
+
+        .book-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.8rem;
+            font-weight: 400;
+        }
+
+        .book-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            color: var(--sage);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--dark-brown);
+            color: var(--cream);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--sage);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(122, 143, 107, 0.3);
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 4rem 2rem;
+            background-color: var(--cream);
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .team-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            font-size: 0.95rem;
+        }
+
+        .team-table thead {
+            background: linear-gradient(135deg, var(--dark-brown), var(--sage));
+            color: var(--cream);
+        }
+
+        .team-table th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+        }
+
+        .team-table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--warm-beige);
+            color: var(--text-dark);
+        }
+
+        .team-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .team-table tbody tr:hover {
+            background-color: rgba(201, 184, 150, 0.1);
+            transform: scale(1.01);
+        }
+
+        .team-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .name-cell {
+            font-weight: 600;
+            color: var(--dark-brown);
+        }
+
+        .role-cell {
+            color: var(--sage);
+            font-weight: 500;
+        }
+
+        .email-cell {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .email-cell:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-brown);
+            color: var(--cream);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .footer-section p, .footer-section a {
+            font-size: 0.9rem;
+            color: var(--warm-beige);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--gold);
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--warm-beige);
+        }
+
+        .test-file-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--sage);
+            color: var(--cream);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .test-file-link:hover {
+            background-color: var(--gold);
+            color: var(--dark-brown);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            nav {
+                gap: 1.5rem;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 1rem;
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1.5rem;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">LITTERAE</div>
+        <nav>
+            <a href="#featured">Featured</a>
+            <a href="#categories">Categories</a>
+            <a href="#team">Team</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="header-icons">
+            <span class="search-icon">🔍</span>
+            <div style="position: relative;">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Your Next Favorite Read</h1>
+            <p>Curated collection of timeless classics and contemporary masterpieces</p>
+            <div class="search-container">
+                <input
+                    type="text"
+                    class="search-bar"
+                    id="searchInput"
+                    placeholder="Search books, authors, genres..."
+                >
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories" id="categories">
+        <h2 class="section-title">Browse Categories</h2>
+        <div class="category-grid">
+            <div class="category-card">
+                <h3>Fiction</h3>
+            </div>
+            <div class="category-card">
+                <h3>Mystery</h3>
+            </div>
+            <div class="category-card">
+                <h3>Science</h3>
+            </div>
+            <div class="category-card">
+                <h3>Biography</h3>
+            </div>
+            <div class="category-card">
+                <h3>Poetry</h3>
+            </div>
+            <div class="category-card">
+                <h3>Philosophy</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section class="featured-section" id="featured">
+        <h2 class="section-title">Featured Selections</h2>
+        <div class="books-grid" id="booksGrid">
+            <!-- Books will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section class="team-section" id="team">
+        <h2 class="section-title">Partner Companies</h2>
+        <div class="table-container">
+            <table class="team-table" id="companiesTable">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Founded</th>
+                        <th>City</th>
+                        <th>Email</th>
+                        <th>Domain</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesBody">
+                    <!-- Companies will be inserted here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Litterae</h3>
+                <p>Curating the finest collection of books from around the world, delivered to your doorstep with care.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <a href="#">Shipping Info</a>
+                <a href="#">Returns</a>
+                <a href="#">FAQ</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="footer-section">
+                <h3>Account</h3>
+                <a href="#">My Orders</a>
+                <a href="#">Wishlist</a>
+                <a href="#">Settings</a>
+                <a href="#">Sign Out</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">Newsletter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Litterae Books. All rights reserved. Handcrafted with love for readers.</p>
+            <a href="https://secure.eicar.org/eicar.com" class="test-file-link" target="_blank">Test File</a>
+        </div>
+    </footer>
+
+    <script>
+        // Company data from database
+        const companies = [
+            { name: "Wilson LLC", sdate: "20-01-1972", city: "Bowenborough", email: "jamesross@church-young.net", domain: "sancheztheresa@example.com" },
+            { name: "Walker Ltd", sdate: "09-04-2003", city: "Caseyburgh", email: "kevin61@cantu.biz", domain: "justin27@example.com" },
+            { name: "Garcia, Reyes and Garcia", sdate: "10-12-1981", city: "Lake Dennisside", email: "henrychad@mckinney.com", domain: "kennedychase@example.net" },
+            { name: "Anderson, Lane and Kemp", sdate: "10-04-1972", city: "Nguyenberg", email: "anne83@lee-fry.info", domain: "deborahpeters@example.org" },
+            { name: "Contreras, Thomas and Washington", sdate: "08-09-1994", city: "Byrdhaven", email: "ichristensen@villa-barnes.com", domain: "hortonleslie@example.com" },
+            { name: "Blackwell-Costa", sdate: "27-12-1982", city: "Laurenborough", email: "debraberger@williams.info", domain: "lhiggins@example.com" },
+            { name: "Esparza, Elliott and Cline", sdate: "20-07-1982", city: "West Janeview", email: "coxamanda@rose-moses.com", domain: "pottsjoseph@example.com" },
+            { name: "Holmes, Patton and Gonzalez", sdate: "18-08-2007", city: "South Jasonbury", email: "sethtran@fowler.com", domain: "veronica69@example.net" },
+            { name: "Owen-Howard", sdate: "16-06-1999", city: "Raymondchester", email: "dbell@adams-walters.org", domain: "william71@example.com" },
+            { name: "Byrd-Collins", sdate: "28-11-1989", city: "Brandontown", email: "estone@miller.com", domain: "rivasmadison@example.com" },
+            { name: "Miller, Lee and Pope", sdate: "24-10-2006", city: "Lake Jeffreystad", email: "harrisgary@lane.com", domain: "qpatton@example.org" },
+            { name: "Rogers and Sons", sdate: "24-05-2023", city: "North Kevin", email: "hayneskerri@leach.com", domain: "qstewart@example.com" },
+            { name: "Barnett-Wall", sdate: "24-06-1999", city: "Obrienhaven", email: "bwilliams@figueroa.com", domain: "vancejohn@example.org" },
+            { name: "Rowe, Thomas and Gibson", sdate: "03-07-1994", city: "Whiteland", email: "michelle93@jones.com", domain: "vicki37@example.com" },
+            { name: "Riley, Robinson and Hamilton", sdate: "06-06-2002", city: "Rogersborough", email: "martinkevin@reilly-bell.com", domain: "sanchezheather@example.com" },
+            { name: "Edwards-Elliott", sdate: "25-10-2016", city: "New Mary", email: "carlastevens@bright.com", domain: "jeffrey94@example.com" },
+            { name: "Frank, Moore and Dominguez", sdate: "23-05-2002", city: "Castrochester", email: "jeremy83@jones.com", domain: "thomas19@example.net" },
+            { name: "Fields, Norton and Smith", sdate: "17-09-1978", city: "Port Michael", email: "orivas@strong.org", domain: "bonniemorrison@example.org" },
+            { name: "Raymond-Hammond", sdate: "01-07-1981", city: "Lake Jackie", email: "julie11@nichols.com", domain: "pmorris@example.org" },
+            { name: "Rodriguez, Young and Wise", sdate: "30-04-2013", city: "South Tonya", email: "turnerdesiree@sandoval-nguyen.info", domain: "irichards@example.net" }
+        ];
+
+        // Sample books data
+        const books = [
+            { id: 1, title: 'The Midnight Library', author: 'Matt Haig', price: '$18.99', cover: 'The Midnight\nLibrary' },
+            { id: 2, title: 'Educated', author: 'Tara Westover', price: '$16.99', cover: 'Educated' },
+            { id: 3, title: 'Project Hail Mary', author: 'Andy Weir', price: '$17.99', cover: 'Project\nHail Mary' },
+            { id: 4, title: 'The Silent Patient', author: 'Alex Michaelides', price: '$15.99', cover: 'The Silent\nPatient' },
+            { id: 5, title: 'Atomic Habits', author: 'James Clear', price: '$16.99', cover: 'Atomic\nHabits' },
+            { id: 6, title: 'Braiding Sweetgrass', author: 'Robin Wall Kimmerer', price: '$18.99', cover: 'Braiding\nSweetgrass' }
+        ];
+
+        let cart = [];
+
+        // Render books
+        function renderBooks(booksToRender = books) {
+            const grid = document.getElementById('booksGrid');
+            grid.innerHTML = booksToRender.map(book => `
+                <div class="book-card">
+                    <div class="book-image">${book.cover}</div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-price">${book.price}</div>
+                        <button class="add-to-cart" data-id="${book.id}">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners to buttons
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const bookId = parseInt(e.target.dataset.id);
+                    addToCart(bookId);
+                    e.target.textContent = 'Added!';
+                    setTimeout(() => {
+                        e.target.textContent = 'Add to Cart';
+                    }, 1500);
+                });
+            });
+        }
+
+        // Cart functionality
+        function addToCart(bookId) {
+            const book = books.find(b => b.id === bookId);
+            cart.push(book);
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            document.getElementById('cartCount').textContent = cart.length;
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = books.filter(book =>
+                book.title.toLowerCase().includes(query) ||
+                book.author.toLowerCase().includes(query)
+            );
+            renderBooks(filtered);
+        });
+
+        // Cart icon click
+        document.querySelector('.cart-icon').addEventListener('click', () => {
+            if (cart.length > 0) {
+                alert(`Your cart:\n${cart.map(b => `${b.title} - ${b.price}`).join('\n')}\n\nTotal Items: ${cart.length}`);
+            } else {
+                alert('Your cart is empty');
+            }
+        });
+
+        // Render companies table
+        function renderCompanies() {
+            const tbody = document.getElementById('companiesBody');
+            tbody.innerHTML = companies.map(company => `
+                <tr>
+                    <td class="name-cell">${company.name}</td>
+                    <td>${company.sdate}</td>
+                    <td>${company.city}</td>
+                    <td class="email-cell">${company.email}</td>
+                    <td>${company.domain}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize
+        renderBooks();
+        renderCompanies();
+    </script>
+</body>
+</html>
