@@ -20,12 +20,12 @@ A beautifully designed bookstore web application featuring a curated collection 
 
 ## Getting Started
 
-Simply open `bookstore.html` in your web browser to view the application.
+Simply open `index.html` in your web browser to view the application.
 
 ## Project Structure
 
 ```
-├── bookstore.html    # Main application file
+├── index.html        # Main application file
 ├── README.md         # This file
 └── .gitignore        # Git ignore configuration
 ```
